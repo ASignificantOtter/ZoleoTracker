@@ -2,13 +2,13 @@
 
 [[package]]
 name = "beautifulsoup4"
-version = "4.11.2"
+version = "4.12.2"
 description = "Screen-scraping library"
 optional = false
 python-versions = ">=3.6.0"
 files = [
-    {file = "beautifulsoup4-4.11.2-py3-none-any.whl", hash = "sha256:0e79446b10b3ecb499c1556f7e228a53e64a2bfcebd455f370d8927cb5b59e39"},
-    {file = "beautifulsoup4-4.11.2.tar.gz", hash = "sha256:bc4bdda6717de5a2987436fb8d72f45dc90dd856bdfd512a1314ce90349a0106"},
+    {file = "beautifulsoup4-4.12.2-py3-none-any.whl", hash = "sha256:bd2520ca0d9d7d12694a53d44ac482d181b4ec1888909b035a3dbf40d0f57d4a"},
+    {file = "beautifulsoup4-4.12.2.tar.gz", hash = "sha256:492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da"},
 ]
 
 [package.dependencies]
@@ -93,17 +93,6 @@ files = [
 
 [package.dependencies]
 pycparser = "*"
-
-[[package]]
-name = "chardet"
-version = "5.2.0"
-description = "Universal encoding detector for Python 3"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970"},
-    {file = "chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7"},
-]
 
 [[package]]
 name = "colorclass"
@@ -194,28 +183,28 @@ files = [
 
 [[package]]
 name = "extract-msg"
-version = "0.39.2"
+version = "0.42.1"
 description = "Extracts emails and attachments saved in Microsoft Outlook's .msg files"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 files = [
-    {file = "extract_msg-0.39.2-py2.py3-none-any.whl", hash = "sha256:3ca81539b70fcac4a1d857dc27b32a54b4afa6b9e2061e476e19f5405964c19b"},
-    {file = "extract_msg-0.39.2.tar.gz", hash = "sha256:87710f998b2c81b4cd8df55bdf8cfd79edb1360110fa468e4dab17f436a3a8af"},
+    {file = "extract_msg-0.42.1-py2.py3-none-any.whl", hash = "sha256:e179d19ad79ac90fb4f7137fec9ba2c68bab8a77ed742d25fd7688778099c745"},
+    {file = "extract_msg-0.42.1.tar.gz", hash = "sha256:a173e461f1d64d3fb5c3b56fbea4aef4b84b49f2d0d5d45275502422fed2e44a"},
 ]
 
 [package.dependencies]
-beautifulsoup4 = ">=4.11.1,<4.12"
-chardet = ">=4.0.0,<6"
-compressed-rtf = "1.0.6"
-ebcdic = "1.1.1"
+beautifulsoup4 = ">=4.11.1,<4.13"
+compressed-rtf = ">=1.0.6,<2"
+ebcdic = ">=1.1.1,<2"
 imapclient = ">=2.3.0,<3"
 olefile = "0.46"
 red-black-tree-mod = "1.20"
-RTFDE = "0.0.2"
-tzlocal = "4.2"
+RTFDE = ">=0.1.0,<0.2"
+tzlocal = ">=4.2,<6"
 
 [package.extras]
-all = ["extract-msg[mime]"]
+all = ["extract-msg[image]", "extract-msg[mime]"]
+image = ["Pillow (>=9.5.0,<10)"]
 mime = ["python-magic (>=0.4.27,<0.5)"]
 
 [[package]]
@@ -237,14 +226,14 @@ doc = ["sphinx"]
 test = ["mock (>=1.3.0)"]
 
 [[package]]
-name = "lark-parser"
-version = "0.12.0"
+name = "lark"
+version = "1.1.5"
 description = "a modern parsing library"
 optional = false
 python-versions = "*"
 files = [
-    {file = "lark-parser-0.12.0.tar.gz", hash = "sha256:15967db1f1214013dca65b1180745047b9be457d73da224fcda3d9dd4e96a138"},
-    {file = "lark_parser-0.12.0-py2.py3-none-any.whl", hash = "sha256:0eaf30cb5ba787fe404d73a7d6e61df97b21d5a63ac26c5008c78a494373c675"},
+    {file = "lark-1.1.5-py3-none-any.whl", hash = "sha256:8476f9903e93fbde4f6c327f74d79e9b4bd0ed9294c5dfa3164ab8c581b5de2a"},
+    {file = "lark-1.1.5.tar.gz", hash = "sha256:4b534eae1f9af5b4ea000bea95776350befe1981658eea3820a01c37e504bb4d"},
 ]
 
 [package.extras]
@@ -462,20 +451,6 @@ files = [
 ]
 
 [[package]]
-name = "pytz-deprecation-shim"
-version = "0.1.0.post0"
-description = "Shims to make deprecation of pytz easier"
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
-files = [
-    {file = "pytz_deprecation_shim-0.1.0.post0-py2.py3-none-any.whl", hash = "sha256:8314c9692a636c8eb3bda879b9f119e350e93223ae83e70e80c31675a0fdc1a6"},
-    {file = "pytz_deprecation_shim-0.1.0.post0.tar.gz", hash = "sha256:af097bae1b616dde5c5744441e2ddc69e74dfdcb0c263129610d85b87445a59d"},
-]
-
-[package.dependencies]
-tzdata = {version = "*", markers = "python_version >= \"3.6\""}
-
-[[package]]
 name = "red-black-tree-mod"
 version = "1.20"
 description = "Flexible python implementation of red black trees"
@@ -487,21 +462,21 @@ files = [
 
 [[package]]
 name = "rtfde"
-version = "0.0.2"
+version = "0.1.0"
 description = "A library for extracting HTML content from RTF encapsulated HTML as commonly found in the exchange MSG email format."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "RTFDE-0.0.2-py3-none-any.whl", hash = "sha256:18386e4f060cee12a2a8035b0acf0cc99689f5dff1bf347bab7e92351860a21d"},
-    {file = "RTFDE-0.0.2.tar.gz", hash = "sha256:b86b5d734950fe8745a5b89133f50554252dbd67c6d1b9265e23ee140e7ea8a2"},
+    {file = "RTFDE-0.1.0-py3-none-any.whl", hash = "sha256:a110dbef435803f3fba717d51a7b9c7a92695c2461637cc6eaf36a9f54386e26"},
+    {file = "RTFDE-0.1.0.tar.gz", hash = "sha256:12215ee59856208010b9200c19afe0f9fa13a3fb39f44015979299c248cbacd7"},
 ]
 
 [package.dependencies]
-lark-parser = ">=0.11"
+lark = "1.1.5"
 oletools = ">=0.56"
 
 [package.extras]
-dev = ["lxml (>=4.6)"]
+dev = ["coverage (>=7.2.2)", "lxml (>=4.6)", "mypy (>=1.1.1)", "pdoc3 (>=0.10.0)"]
 msg-parse = ["extract-msg (>=0.27)"]
 
 [[package]]
@@ -539,22 +514,20 @@ files = [
 
 [[package]]
 name = "tzlocal"
-version = "4.2"
+version = "5.0.1"
 description = "tzinfo object for the local timezone"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "tzlocal-4.2-py3-none-any.whl", hash = "sha256:89885494684c929d9191c57aa27502afc87a579be5cdd3225c77c463ea043745"},
-    {file = "tzlocal-4.2.tar.gz", hash = "sha256:ee5842fa3a795f023514ac2d801c4a81d1743bbe642e3940143326b3a00addd7"},
+    {file = "tzlocal-5.0.1-py3-none-any.whl", hash = "sha256:f3596e180296aaf2dbd97d124fe76ae3a0e3d32b258447de7b939b3fd4be992f"},
+    {file = "tzlocal-5.0.1.tar.gz", hash = "sha256:46eb99ad4bdb71f3f72b7d24f4267753e240944ecfc16f25d2719ba89827a803"},
 ]
 
 [package.dependencies]
-pytz-deprecation-shim = "*"
 tzdata = {version = "*", markers = "platform_system == \"Windows\""}
 
 [package.extras]
-devenv = ["black", "pyroma", "pytest-cov", "zest.releaser"]
-test = ["pytest (>=4.3)", "pytest-mock (>=3.3)"]
+devenv = ["black", "check-manifest", "flake8", "pyroma", "pytest (>=4.3)", "pytest-cov", "pytest-mock (>=3.3)", "zest.releaser"]
 
 [[package]]
 name = "win-unicode-console"
@@ -569,4 +542,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "1b7bc59eaffacc31172e4300377b32397acaad5f25e74dd9deae00890a3bbaea"
+content-hash = "a400a7d25e14a18cae42e14265e575525bfea46dda8d08faab3e23903dda6505"

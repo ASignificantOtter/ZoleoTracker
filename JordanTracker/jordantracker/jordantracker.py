@@ -28,6 +28,7 @@ def parse_email(folder_path):
 
     df_eml = pd.DataFrame([file_names, texts]).T
     df_eml.columns = ['file_name', 'text']
+    print(df_eml)
     
     return df_eml, df_eml.columns
 
