@@ -1,13 +1,15 @@
 {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "configurations": [
         {
-            "name": "jordantracker",
+            "name": "debug jordantracker",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "module": "jordantracker",
-            "args": []
+            "justMyCode": false,
+            "args": [
+            ]
         }
     ]
 }
