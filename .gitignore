@@ -2,3 +2,4 @@
 *pycache*
 Emails/
 *.DS_Store
+*.csv
