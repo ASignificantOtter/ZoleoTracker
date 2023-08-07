@@ -4,10 +4,13 @@ import os
 import csv
 import glob
 import pandas as pd
+import email
+import html2text
 
 
 from pathlib import Path
 from email import policy
+from email import parser
 from email.parser import BytesParser
 from datetime import datetime as dt
 from tkinter.filedialog import askdirectory
@@ -20,15 +23,16 @@ def parse_email(folder_path):
         with open(file, 'rb') as fp:
             name = fp.name  # Get file name
             msg = BytesParser(policy=policy.default).parse(fp)
-        text = msg.get_body(preferencelist=('plain')).get_content()
+            #msg_data = email.message_from_bytes(fp, policy=email.policy.default)
+        text = msg.get_body().get_content()
+        text = html2text.html2text(text)
+        
         file_names.append(name)
         texts.append(text)
         fp.close()
 
     df_eml = pd.DataFrame([file_names, texts]).T
     df_eml.columns = ['file_name', 'text']
-    #print(df_eml)
-    #print(df_eml.columns)
     
     return df_eml
 
@@ -50,7 +54,7 @@ def tracker():
     df_eml = parse_email(folder_path)  
     
     df_eml.to_csv('location.csv', sep='\t', index=False,header=True)
-    #print(df_eml.columns)
+   
     pass
 
 if __name__ == '__main__':

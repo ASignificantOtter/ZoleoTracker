@@ -183,13 +183,13 @@ files = [
 
 [[package]]
 name = "extract-msg"
-version = "0.42.1"
+version = "0.42.2"
 description = "Extracts emails and attachments saved in Microsoft Outlook's .msg files"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "extract_msg-0.42.1-py2.py3-none-any.whl", hash = "sha256:e179d19ad79ac90fb4f7137fec9ba2c68bab8a77ed742d25fd7688778099c745"},
-    {file = "extract_msg-0.42.1.tar.gz", hash = "sha256:a173e461f1d64d3fb5c3b56fbea4aef4b84b49f2d0d5d45275502422fed2e44a"},
+    {file = "extract_msg-0.42.2-py2.py3-none-any.whl", hash = "sha256:38bb74266f88ca6e7c6bc0b42e63c07c7369ec829d9cdfe5430879096458aa6f"},
+    {file = "extract_msg-0.42.2.tar.gz", hash = "sha256:2b827839b773dd9889fe829f7a6add408d1d807f8b6d44886afb7dfcdf804580"},
 ]
 
 [package.dependencies]
@@ -206,6 +206,17 @@ tzlocal = ">=4.2,<6"
 all = ["extract-msg[image]", "extract-msg[mime]"]
 image = ["Pillow (>=9.5.0,<10)"]
 mime = ["python-magic (>=0.4.27,<0.5)"]
+
+[[package]]
+name = "html2text"
+version = "2020.1.16"
+description = "Turn HTML into equivalent Markdown-structured text."
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "html2text-2020.1.16-py3-none-any.whl", hash = "sha256:c7c629882da0cf377d66f073329ccf34a12ed2adf0169b9285ae4e63ef54c82b"},
+    {file = "html2text-2020.1.16.tar.gz", hash = "sha256:e296318e16b059ddb97f7a8a1d6a5c1d7af4544049a01e261731d2d5cc277bbb"},
+]
 
 [[package]]
 name = "imapclient"
@@ -542,4 +553,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a400a7d25e14a18cae42e14265e575525bfea46dda8d08faab3e23903dda6505"
+content-hash = "173d08cfa26859d5bc0031675fd7dff7e9ebe1ac15aee090ba5a24059ce4e4a1"
