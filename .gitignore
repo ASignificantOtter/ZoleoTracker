@@ -1,2 +1,4 @@
 .venv/*
 *pycache*
+Emails/
+*.DS_Store

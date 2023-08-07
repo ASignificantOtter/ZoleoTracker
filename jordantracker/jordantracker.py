@@ -16,7 +16,6 @@ def parse_email(folder_path):
     eml_files = glob.glob(folder_path + '*.eml') # get all .eml files in a list
     file_names = []
     texts = []
-    
     for file in eml_files:
         with open(file, 'rb') as fp:
             name = fp.name  # Get file name
@@ -28,10 +27,16 @@ def parse_email(folder_path):
 
     df_eml = pd.DataFrame([file_names, texts]).T
     df_eml.columns = ['file_name', 'text']
-    print(df_eml)
+    #print(df_eml)
+    #print(df_eml.columns)
     
-    return df_eml, df_eml.columns
+    return df_eml
 
+def fpath():
+    current = os.path.dirname(os.path.realpath(__file__))
+    parent = os.path.dirname(current)
+    folder_path = os.path.join(parent, 'emails/')
+    return folder_path
 
 
 def stamp_time(none):
@@ -40,9 +45,13 @@ def stamp_time(none):
 
     return timestamp
 
+def tracker():
+    folder_path = fpath()
+    df_eml = parse_email(folder_path)  
+    
+    df_eml.to_csv('location.csv', sep='\t', index=False,header=True)
+    #print(df_eml.columns)
+    pass
 
 if __name__ == '__main__':
-    folder_path = os.path.normpath(askdirectory(title='Select Folder'))  
-    df_eml, df_eml.columns = parse_email(folder_path)  
-    print(df_eml)
-    
+    tracker()
