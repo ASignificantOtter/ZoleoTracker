@@ -57,13 +57,10 @@ def parse_email(folder_path):
         links.append(link)
         fp.close()
 
-    df_eml = pd.DataFrame([file_names, texts]).T
-    #this is the problem child below
-    df_location = pd.DataFrame([file_names], [checkins], [locations], [links]).T
-    df_eml.columns = ['file_name', 'text']
+    df_location = pd.DataFrame([file_names, checkins, locations, links]).T
     df_location.columns = ['file name', 'check-in', 'location', 'link']
     
-    return df_eml, df_location
+    return df_location
 
 def fpath():
     current = os.path.dirname(os.path.realpath(__file__))
@@ -84,9 +81,7 @@ def stamp_time(checkin):
 
 def tracker():
     folder_path = fpath()
-    df_eml, df_location = parse_email(folder_path)  
-    
-    df_eml.to_csv('email.csv', sep='\t', index=False,header=True)
+    df_location = parse_email(folder_path) 
     df_location.to_csv('location.csv', sep='\t', index=False,header=True)
    
     pass
