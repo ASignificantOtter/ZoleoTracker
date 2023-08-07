@@ -7,6 +7,7 @@ import pandas as pd
 import email
 import html2text
 import re
+from datetime import datetime
 
 
 from pathlib import Path
@@ -14,7 +15,6 @@ from email import policy
 from email import parser
 from email.parser import BytesParser
 from datetime import datetime as dt
-from tkinter.filedialog import askdirectory
 
 def parse_email(folder_path):
     eml_files = glob.glob(folder_path + '*.eml') # get all .eml files in a list
@@ -37,14 +37,18 @@ def parse_email(folder_path):
             location = re.search(r"My location is (.+)", text)
         
         try:
-            checkin = re.search(r"sent at: (.+)\(UTC\)", text).group(1)
+            checkin = re.search(r"sent at: (.+) \(UTC\)", text).group(1)
         except AttributeError:
-            checkin = re.search(r"sent at: (.+)\(UTC\)", text)
+            checkin = re.search(r"sent at: (.+) \(UTC\)", text)
+
+        checkin = stamp_time(checkin)
 
         try:
-            link = re.search(r"View on map \]\((.+)\)", text).group(1)
+            link = str(re.search(r"View on map \]\((.+)\)", text).group(1))
         except AttributeError:
-            link = re.search(r"View on map \]\((.+)\)", text)
+            link = str(re.search(r"View on map \]\((.+)\)", text))
+
+        
         
         file_names.append(name)
         texts.append(text)
@@ -54,9 +58,10 @@ def parse_email(folder_path):
         fp.close()
 
     df_eml = pd.DataFrame([file_names, texts]).T
-    df_location = pd.DataFrame([checkins, locations]).T
+    #this is the problem child below
+    df_location = pd.DataFrame([file_names], [checkins], [locations], [links]).T
     df_eml.columns = ['file_name', 'text']
-    df_location.columns = ['check-in', 'location']
+    df_location.columns = ['file name', 'check-in', 'location', 'link']
     
     return df_eml, df_location
 
@@ -67,9 +72,13 @@ def fpath():
     return folder_path
 
 
-def stamp_time(none):
+def stamp_time(checkin):
     now = dt.now()
-    timestamp = now.strftime("%d/%m/%Y %H:%M:%S")
+    curtime = now.strftime("%d %b %Y %H:%M:%S")
+    
+    #examplestr = '30 Jul 2023 17:26:53'
+    datetime_format = '%d %b %Y %H:%M:%S'
+    timestamp = datetime.strptime(checkin, datetime_format)
 
     return timestamp
 
