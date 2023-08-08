@@ -1,18 +1,14 @@
 # Email parser / CSV writer of Jordan's location
 
 import os
-import csv
+#import csv
 import glob
 import pandas as pd
-import email
 import html2text
 import re
 from datetime import datetime
 
-
-from pathlib import Path
 from email import policy
-from email import parser
 from email.parser import BytesParser
 from datetime import datetime as dt
 
@@ -58,7 +54,7 @@ def parse_email(folder_path):
         fp.close()
 
     df_location = pd.DataFrame([file_names, checkins, locations, links]).T
-    df_location.columns = ['file name', 'check-in', 'location', 'link']
+    df_location.columns = ['file name', 'checkin', 'location', 'link']
     
     return df_location
 
@@ -66,6 +62,7 @@ def fpath():
     current = os.path.dirname(os.path.realpath(__file__))
     parent = os.path.dirname(current)
     folder_path = os.path.join(parent, 'emails/')
+
     return folder_path
 
 
@@ -82,6 +79,9 @@ def stamp_time(checkin):
 def tracker():
     folder_path = fpath()
     df_location = parse_email(folder_path) 
+    df_location.sort_values(by='checkin', inplace=True)
+
+    #creates csv - need to make appendable
     df_location.to_csv('location.csv', sep='\t', index=False,header=True)
    
     pass
