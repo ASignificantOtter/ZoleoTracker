@@ -10,6 +10,9 @@ python = "^3.11"
 pandas = "^2.0.3"
 extract-msg = "^0.42.1"
 html2text = "2020.1.16"
+slackclient = "^2.9.4"
+flask = "^2.3.2"
+slackeventsapi = "^3.0.1"
 
 [tool.poetry.scripts]
 jordantracker = "jordantracker.jordantracker:run"
