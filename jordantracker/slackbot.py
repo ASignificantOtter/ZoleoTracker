@@ -1,56 +1,43 @@
 #automatic slack posting of Jordan Tracker
 from jordantracker import config
 import slack
-from flask import Flask
-from slackeventsapi import SlackEventAdapter
 import csv
 import os
 
 
-SLACK_TOKEN = config.SLACK_TOKEN
-SIGNING_SECRET = config.SIGNING_SECRET
-client = slack.WebClient(token=SLACK_TOKEN)
+def file_path() -> str: 
+    cwd = os.path.dirname(os.path.realpath(__file__))
+    parent_directory = os.path.dirname(cwd)
+    csv_file_path = os.path.join(parent_directory, parent_directory+"/location.csv")
+
+    return csv_file_path
 
 
-app = Flask(__name__)
-slack_event_adapter = SlackEventAdapter(SIGNING_SECRET, '/slack/events', app)
+def import_csv(csv_file_path) -> tuple[str, str, str]:
+    csv_data = []
 
-def fpath():
-    current = os.path.dirname(os.path.realpath(__file__))
-    parent = os.path.dirname(current)
-    file = os.path.join(parent, parent+"/location.csv")
-
-    return file
-
-file = fpath()
-
-def import_csv(csvfilename):
-    with open(csvfilename, "r", encoding="utf-8", errors="ignore") as f:
+    with open(csv_file_path, "r", encoding="utf-8", errors="ignore") as f:
        csv_reader = csv.reader(f, delimiter='\t')
-       for line in csv_reader:
-           x = line[1]
-           y = line[2]
-           z = line[3]
-    return x, y, z
-
-
-def hello():
+       for row in csv_reader:
+           csv_data.append(row)
+           
+    latest_update = csv_data[-1]
     
-    client.chat_postMessage(channel='#jordan-tracker',text='Hello World with hidden secrets')
+    date = latest_update[1]
+    gps = latest_update[2]
+    map = latest_update[3]
 
-    pass
+    return date, gps, map
 
-def update_location():
 
-    file = fpath()
-    date, gps, map = import_csv(file)
+def post_location() -> None:
+
+    csv_file = file_path()
+    date, gps, map = import_csv(csv_file)
    
-
-    client = slack.WebClient(token=SLACK_TOKEN)
+    client = slack.WebClient(token=config.SLACK_TOKEN)
     client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + date + '\n' + map)
 
-    pass
+    
 
-if __name__ == "__main__":
-    app.run(debug=True)
 
