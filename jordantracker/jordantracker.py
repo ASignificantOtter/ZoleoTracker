@@ -37,7 +37,7 @@ def parse_email(folder_path):
         except AttributeError:
             checkin = re.search(r"sent at: (.+) \(UTC\)", text)
 
-        checkin = stamp_time(checkin)
+        #checkin = stamp_time(checkin)
 
         try:
             link = str(re.search(r"View on map \]\((.+)\)", text).group(1))
@@ -54,7 +54,7 @@ def parse_email(folder_path):
         fp.close()
 
     df_location = pd.DataFrame([file_names, checkins, locations, links]).T
-    df_location.columns = ['file name', 'checkin', 'location', 'link']
+    df_location.columns = ['file', 'checkin', 'location', 'link']
     
     return df_location
 
