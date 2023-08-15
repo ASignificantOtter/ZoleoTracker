@@ -37,7 +37,7 @@ def parse_email(folder_path):
         except AttributeError:
             checkin = re.search(r"sent at: (.+) \(UTC\)", text)
 
-        #checkin = stamp_time(checkin)
+        checkin = stamp_time(checkin)
 
         try:
             link = str(re.search(r"View on map \]\((.+)\)", text).group(1))

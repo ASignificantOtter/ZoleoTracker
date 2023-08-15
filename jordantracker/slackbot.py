@@ -37,7 +37,3 @@ def post_location() -> None:
    
     client = slack.WebClient(token=config.SLACK_TOKEN)
     client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + date + '\n' + map)
-
-    
-
-
