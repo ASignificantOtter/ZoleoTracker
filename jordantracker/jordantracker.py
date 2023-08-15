@@ -54,7 +54,7 @@ def parse_email(folder_path):
         fp.close()
 
     df_location = pd.DataFrame([file_names, checkins, locations, links]).T
-    df_location.columns = ['file name', 'checkin', 'location', 'link']
+    df_location.columns = ['file', 'checkin', 'location', 'link']
     
     return df_location
 
@@ -81,7 +81,7 @@ def tracker():
     df_location = parse_email(folder_path) 
     df_location.sort_values(by='checkin', inplace=True)
 
-    #creates csv - need to make appendable
+    #appens csv
     df_location.to_csv('location.csv', sep='\t', index=False,header=True)
    
     pass

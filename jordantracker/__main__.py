@@ -1,5 +1,6 @@
-from jordantracker import jordantracker as jordan
+from jordantracker import jordantracker
+from jordantracker import slackbot
 
-#print("hello, Brett main!")
 
-x = jordan.tracker()
+jordantracker.tracker()
+slackbot.post_location()
