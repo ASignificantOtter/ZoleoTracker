@@ -6,22 +6,18 @@ from jordantracker import config
 
 
 
-def csv_file_path() -> str:
+def file_path(filename: str) -> str:
     cwd = os.path.dirname(os.path.realpath(__file__))
     parent_directory = os.path.dirname(cwd)
-    csv_file_path = os.path.join(parent_directory, parent_directory+"/location.csv")
+    file_path = os.path.join(parent_directory, parent_directory+filename)
 
-    return csv_file_path
+    return file_path
 
-def text_file_path() -> str:
-    cwd = os.path.dirname(os.path.realpath(__file__))
-    parent_directory = os.path.dirname(cwd)
-    text_file_path = os.path.join(parent_directory, parent_directory+"/previous_checkin.txt")
 
-    return text_file_path
-
-def import_csv(csv_file_path) -> tuple[str, str, str]:
+def import_csv() -> tuple[str, str, str]:
+    filename = '/location.csv'
     csv_data = []
+    csv_file_path = file_path(filename)
 
     with open(csv_file_path, "r", encoding="utf-8", errors="ignore") as f:
        csv_reader = csv.reader(f, delimiter='\t')
@@ -36,7 +32,7 @@ def import_csv(csv_file_path) -> tuple[str, str, str]:
 
     return date, gps, loc_link
 
-def decide_to_post(previous_checkin, current_checkin) -> bool:
+def should_post(previous_checkin, current_checkin) -> bool:
     #logic to post or not
     if current_checkin > previous_checkin:
         return True
@@ -50,17 +46,13 @@ def get_previous_checkin(text_file) -> str:
 
 def post_location() -> None:
 
-    csv_file = csv_file_path()
-    text_file = text_file_path()
-    current_checkin, gps, loc_link = import_csv(csv_file)
+    
+    text_file = file_path('/previous_checkin.txt')
+    current_checkin, gps, loc_link = import_csv()
     previous_checkin = get_previous_checkin(text_file)
-    #previous_checkin = current_checkin
 
-
-    client = slack.WebClient(token=config.SLACK_TOKEN)
-
-    if decide_to_post(previous_checkin, current_checkin) is True:
+    if should_post(previous_checkin, current_checkin):
+        client = slack.WebClient(token=config.SLACK_TOKEN)
         client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + current_checkin + '\n' + loc_link)
-        previous_checkin_text = open(text_file, 'w', encoding='utf-8')
-        previous_checkin_text.writelines(current_checkin)
-        previous_checkin_text.close()
+        with open(text_file, 'w', encoding='utf-8') as previous_checkin_text_fp:
+         previous_checkin_text_fp.writelines(current_checkin)
