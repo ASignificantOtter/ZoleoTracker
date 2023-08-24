@@ -1,8 +1,9 @@
-#automatic slack posting of Jordan Tracker
-from jordantracker import config
-import slack
+# automatic slack posting of Jordan Tracker
 import csv
 import os
+import slack
+from jordantracker import config
+
 
 
 def file_path() -> str: 
@@ -25,15 +26,20 @@ def import_csv(csv_file_path) -> tuple[str, str, str]:
     
     date = latest_update[1]
     gps = latest_update[2]
-    map = latest_update[3]
+    loc_link = latest_update[3]
 
-    return date, gps, map
+    return date, gps, loc_link
+
+def decide_to_post(previous_checkin, current_checkin) -> bool:
+    #logic to post or not
+    if current_checkin > previous_checkin:
+        return True
 
 
 def post_location() -> None:
 
     csv_file = file_path()
-    date, gps, map = import_csv(csv_file)
-   
+    date, gps, loc_link = import_csv(csv_file)
+
     client = slack.WebClient(token=config.SLACK_TOKEN)
-    client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + date + '\n' + map)
+    client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + date + '\n' + loc_link)
