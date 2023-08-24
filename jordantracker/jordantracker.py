@@ -67,8 +67,8 @@ def fpath():
 
 
 def stamp_time(checkin):
-    now = dt.now()
-    curtime = now.strftime("%d %b %Y %H:%M:%S")
+    #now = dt.now()
+    #curtime = now.strftime("%d %b %Y %H:%M:%S")
     
     #examplestr = '30 Jul 2023 17:26:53'
     datetime_format = '%d %b %Y %H:%M:%S'
@@ -83,8 +83,7 @@ def tracker():
 
     #appens csv
     df_location.to_csv('location.csv', sep='\t', index=False,header=True)
-   
-    pass
+
 
 if __name__ == '__main__':
     tracker()
