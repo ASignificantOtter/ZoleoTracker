@@ -3,4 +3,5 @@
 Emails/
 *.DS_Store
 *.csv
+previous_checkin.txt
 jordantracker/config.py
