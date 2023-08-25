@@ -9,7 +9,24 @@ import html2text
 import pandas as pd
 from jordantracker import config
 
+EMAIL_SERVER            = config.EMAIL_SERVER
+EMAIL_LOGIN_ACOUNT      = config.EMAIL_ACCOUNT 
+EMAIL_LOGIN_PASSWORD    = config.EMAIL_PASSWORD
+MESSAGE_FORMAT          = config.MESSAGE_FORMAT
+CHECKIN_EMAIL_SUBJECT   = config.CHECKIN_EMAIL_SUBJECT
+EMAIL_FOLDER            = config.EMAIL_FOLDER
+
+def get_inbox() -> IMAP4_SSL:
+    mail = imaplib.IMAP4_SSL(EMAIL_SERVER)
+    mail.login(EMAIL_LOGIN_ACOUNT, EMAIL_LOGIN_PASSWORD)
+    mail.select(EMAIL_FOLDER)
+
+    return mail
+
 def parse_email_server() -> pd.DataFrame:
+    # Connects to email account from config file, searches through specified email folder, 
+    # looks for check-in emails by subject, parses out the checkin time, location, and google maps link. 
+    # Returns a dataframe of [email_subject, checkin time, checkin location, location google maps link]
 
     file_names = []
     texts = []
@@ -17,21 +34,20 @@ def parse_email_server() -> pd.DataFrame:
     checkins = []
     links = []
 
-    mail = imaplib.IMAP4_SSL(config.EMAIL_SERVER)
-    mail.login(config.EMAIL_ACCOUNT, config.EMAIL_PASSWORD)
-    mail.select('inbox')
-    status, data = mail.search(None, 'ALL')
+    mail = get_inbox()
+    mail_status, inbox_data = mail.search(None, 'ALL')
     mail_ids = []
-    for block in data:
-        mail_ids += block.split()
-
+    # splits out individual email messages from one folder blob
+    for mail_block in inbox_data:
+        mail_ids += mail_block.split()
+    # iterates through email messages
     for i in mail_ids:
-        status, data = mail.fetch(i, '(RFC822)')
-        for response_part in data:
+        status, raw_email_data = mail.fetch(i, MESSAGE_FORMAT)
+        for response_part in raw_email_data:
             if isinstance(response_part, tuple):
                 message = email.message_from_bytes(response_part[1])
-                mail_subject = message['subject']
-                if mail_subject == 'Check-in message from SlothPace':
+
+                if message['subject'] == CHECKIN_EMAIL_SUBJECT:
 
                     if message.is_multipart():
                         mail_content = ''
@@ -40,15 +56,12 @@ def parse_email_server() -> pd.DataFrame:
                             if part.get_content_type() == 'text/plain':
                                 mail_content += part.get_payload()
                                 mail_content = base64.b64decode(mail_content)
-                                mail_content_text = mail_content.decode(errors='ignore')
-                                text = html2text.html2text(mail_content_text)
-                        
-
+                                
                     else:
-                        mail_content = message.get_payload()
-                        mail_content = base64.b64decode(mail_content)
-                        mail_content_text = mail_content.decode(errors='ignore')
-                        text = html2text.html2text(mail_content_text)
+                        mail_content = base64.b64decode(message.get_payload())
+                
+                mail_content_text = mail_content.decode(errors='ignore')
+                text = html2text.html2text(mail_content_text) 
                     
         
         try:
@@ -68,18 +81,16 @@ def parse_email_server() -> pd.DataFrame:
         except AttributeError:
             link = str(re.search(r"View on map \]\((.+)\)", text))
 
-        
-        file_names.append(mail_subject)
+        file_names.append(message['subject'])
         texts.append(text)
         locations.append(location)
         checkins.append(checkin)
         links.append(link)
-    df_location = pd.DataFrame([file_names, checkins, locations, links]).T
-    df_location.columns = ['file', 'checkin', 'location', 'link']
+    df_all_checkins = pd.DataFrame([file_names, checkins, locations, links]).T
+    df_all_checkins.columns = ['file', 'checkin', 'location', 'link']
     
-    return df_location
-                        
-
+    return df_all_checkins
+               
 def stamp_time(checkin) -> datetime:
 
     datetime_format = '%d %b %Y %H:%M:%S'
@@ -89,11 +100,9 @@ def stamp_time(checkin) -> datetime:
 
 def tracker() -> None:
 
-
-    df_location = parse_email_server()
-    df_location.sort_values(by='checkin', inplace=True)
-
-    df_location.to_csv('location.csv', sep='\t', index=False,header=True)
+    df_all_checkins = parse_email_server()
+    df_all_checkins.sort_values(by='checkin', inplace=True) #sorts from oldest checkin to latest checkin
+    df_all_checkins.to_csv('location.csv', sep='\t', index=False,header=True)
 
 
 
