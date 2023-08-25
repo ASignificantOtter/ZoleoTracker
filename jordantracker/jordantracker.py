@@ -16,7 +16,7 @@ MESSAGE_FORMAT          = config.MESSAGE_FORMAT
 CHECKIN_EMAIL_SUBJECT   = config.CHECKIN_EMAIL_SUBJECT
 EMAIL_FOLDER            = config.EMAIL_FOLDER
 
-def get_inbox() -> IMAP4_SSL:
+def get_inbox():
     mail = imaplib.IMAP4_SSL(EMAIL_SERVER)
     mail.login(EMAIL_LOGIN_ACOUNT, EMAIL_LOGIN_PASSWORD)
     mail.select(EMAIL_FOLDER)
