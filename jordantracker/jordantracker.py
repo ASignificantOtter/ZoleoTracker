@@ -9,25 +9,27 @@ import html2text
 import pandas as pd
 from jordantracker import config
 
-EMAIL_SERVER            = config.EMAIL_SERVER
+
 EMAIL_LOGIN_ACOUNT      = config.EMAIL_ACCOUNT 
 EMAIL_LOGIN_PASSWORD    = config.EMAIL_PASSWORD
 MESSAGE_FORMAT          = config.MESSAGE_FORMAT
 CHECKIN_EMAIL_SUBJECT   = config.CHECKIN_EMAIL_SUBJECT
 EMAIL_FOLDER            = config.EMAIL_FOLDER
+EMAIL_BODY_CONTENT_TYPE = 'text/plain'
 
+#returns a IMAP4_SSL class object containing the entire email folder from server
 def get_inbox():
-    mail = imaplib.IMAP4_SSL(EMAIL_SERVER)
+    mail = imaplib.IMAP4_SSL(config.EMAIL_SERVER)
     mail.login(EMAIL_LOGIN_ACOUNT, EMAIL_LOGIN_PASSWORD)
     mail.select(EMAIL_FOLDER)
 
     return mail
 
+# Connects to email account from config file, searches through specified email folder, 
+# looks for check-in emails by subject, parses out the checkin time, location, and google maps link. 
+# Returns a dataframe of [email_subject, checkin time, checkin location, location google maps link]
 def parse_email_server() -> pd.DataFrame:
-    # Connects to email account from config file, searches through specified email folder, 
-    # looks for check-in emails by subject, parses out the checkin time, location, and google maps link. 
-    # Returns a dataframe of [email_subject, checkin time, checkin location, location google maps link]
-
+ 
     file_names = []
     texts = []
     locations = []
@@ -35,15 +37,15 @@ def parse_email_server() -> pd.DataFrame:
     links = []
 
     mail = get_inbox()
-    mail_status, inbox_data = mail.search(None, 'ALL')
+    mail_status, inbox = mail.search(None, 'ALL')
     mail_ids = []
     # splits out individual email messages from one folder blob
-    for mail_block in inbox_data:
+    for mail_block in inbox:
         mail_ids += mail_block.split()
     # iterates through email messages
     for i in mail_ids:
-        status, raw_email_data = mail.fetch(i, MESSAGE_FORMAT)
-        for response_part in raw_email_data:
+        status, raw_email = mail.fetch(i, MESSAGE_FORMAT)
+        for response_part in raw_email:
             if isinstance(response_part, tuple):
                 message = email.message_from_bytes(response_part[1])
 
@@ -53,7 +55,7 @@ def parse_email_server() -> pd.DataFrame:
                         mail_content = ''
 
                         for part in message.get_payload():
-                            if part.get_content_type() == 'text/plain':
+                            if part.get_content_type() == EMAIL_BODY_CONTENT_TYPE:
                                 mail_content += part.get_payload()
                                 mail_content = base64.b64decode(mail_content)
                                 
@@ -101,11 +103,9 @@ def stamp_time(checkin) -> datetime:
 def tracker() -> None:
 
     df_all_checkins = parse_email_server()
-    df_all_checkins.sort_values(by='checkin', inplace=True) #sorts from oldest checkin to latest checkin
+    #sorts from oldest checkin to latest checkin
+    df_all_checkins.sort_values(by='checkin', inplace=True) 
     df_all_checkins.to_csv('location.csv', sep='\t', index=False,header=True)
-
-
-
 
 if __name__ == '__main__':
     tracker()
