@@ -9,19 +9,13 @@ import html2text
 import pandas as pd
 from jordantracker import config
 
-
-EMAIL_LOGIN_ACOUNT      = config.EMAIL_ACCOUNT 
-EMAIL_LOGIN_PASSWORD    = config.EMAIL_PASSWORD
-MESSAGE_FORMAT          = config.MESSAGE_FORMAT
-CHECKIN_EMAIL_SUBJECT   = config.CHECKIN_EMAIL_SUBJECT
-EMAIL_FOLDER            = config.EMAIL_FOLDER
-EMAIL_BODY_CONTENT_TYPE = 'text/plain'
+PLAIN_TEXT = 'text/plain'
 
 #returns a IMAP4_SSL class object containing the entire email folder from server
 def get_inbox():
     mail = imaplib.IMAP4_SSL(config.EMAIL_SERVER)
-    mail.login(EMAIL_LOGIN_ACOUNT, EMAIL_LOGIN_PASSWORD)
-    mail.select(EMAIL_FOLDER)
+    mail.login(config.EMAIL_ACCOUNT, config.EMAIL_PASSWORD)
+    mail.select(config.EMAIL_FOLDER)
 
     return mail
 
@@ -39,23 +33,24 @@ def parse_email_server() -> pd.DataFrame:
     mail = get_inbox()
     mail_status, inbox = mail.search(None, 'ALL')
     mail_ids = []
-    # splits out individual email messages from one folder blob
+    # splits out individual email messages from one blob (inbox)
+    # iterates through each individual email id, and splits from the full inbox block
     for mail_block in inbox:
         mail_ids += mail_block.split()
-    # iterates through email messages
+    # iterates through email messages using email id as an iterator. 
     for i in mail_ids:
-        status, raw_email = mail.fetch(i, MESSAGE_FORMAT)
+        status, raw_email = mail.fetch(i, config.MESSAGE_FORMAT)
         for response_part in raw_email:
             if isinstance(response_part, tuple):
                 message = email.message_from_bytes(response_part[1])
 
-                if message['subject'] == CHECKIN_EMAIL_SUBJECT:
+                if message['subject'] == config.CHECKIN_EMAIL_SUBJECT:
 
                     if message.is_multipart():
                         mail_content = ''
 
                         for part in message.get_payload():
-                            if part.get_content_type() == EMAIL_BODY_CONTENT_TYPE:
+                            if part.get_content_type() == PLAIN_TEXT:
                                 mail_content += part.get_payload()
                                 mail_content = base64.b64decode(mail_content)
                                 
