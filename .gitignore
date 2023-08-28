@@ -5,3 +5,4 @@ Emails/
 *.csv
 previous_checkin.txt
 jordantracker/config.py
+runtracker.zsh
