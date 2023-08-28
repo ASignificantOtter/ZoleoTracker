@@ -8,6 +8,7 @@ import imaplib
 import html2text
 import pandas as pd
 from jordantracker import config
+from jordantracker import slackbot
 
 PLAIN_TEXT = 'text/plain'
 
@@ -102,5 +103,10 @@ def tracker() -> None:
     df_all_checkins.sort_values(by='checkin', inplace=True) 
     df_all_checkins.to_csv('location.csv', sep='\t', index=False,header=True)
 
-if __name__ == '__main__':
+def start():
     tracker()
+    slackbot.post_location()
+
+
+if __name__ == '__main__':
+    start()

@@ -14,7 +14,7 @@ slackclient = "^2.9.4"
 pytest = "^7.4.0"
 
 [tool.poetry.scripts]
-jordantracker = "jordantracker.jordantracker:run"
+jordantracker = "jordantracker.jordantracker:start"
 
 [build-system]
 requires = ["poetry-core"]
