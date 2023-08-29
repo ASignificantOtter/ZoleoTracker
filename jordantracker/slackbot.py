@@ -51,6 +51,6 @@ def post_location() -> None:
 
     if should_post(previous_checkin, current_checkin):
         client = slack.WebClient(token=config.SLACK_TOKEN)
-        client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + current_checkin + '\n' + loc_link)
+        client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + current_checkin + ' (UTC)\n' + loc_link)
         with open(file_path('/previous_checkin.txt'), 'w', encoding='utf-8') as previous_checkin_text_fp:
          previous_checkin_text_fp.writelines(current_checkin)
