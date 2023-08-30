@@ -1,5 +1,5 @@
 from datetime import datetime
-from jordantracker import slackbot
+from zoleotracker import slackbot
 
 def test_should_post_returns_True_if_date_is_newer():
 
