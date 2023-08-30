@@ -10,18 +10,18 @@ ZoleoTracker is an automated Python script to post a _ZOLEO_ device user's curre
 My housemate decided that it would be fun to bike across the country, and I wanted to automate how friends and family were updated on his location.
 Since _ZOLEO_ devices (the gps that he took with him), don't have a REST API available, I decided to parse the automated emails that are sent every time he checks in.
 
-I also wanted an excuse to build a decent python app, and integrate with slack and social media backends.
+I also wanted an excuse to build a python app that integrates with slack and social media backends!
 
-## Installation
+## Getting Started
 
-ZoleoTracker is designed to run in a virtual environment using poetry. It is currently a single run script, and I've set up a cronjob to run it every 30mins for my use. 
+ZoleoTracker is designed to run in a python virtual environment using poetry. It is a single run script, and I've set up a cronjob to run it every 30mins for my use. 
 
-Installation steps
+1. clone this repository
+2. edit the *example_config.py* to include your login info and save as *config.py*
+3. run `poetry install` from the high level directory.
+4. if you want to automate the script, create a cronjob that executes `poetry run ZoleoTracker` from the high level project directory.
 
-- clone this repository
-- edit the *example_config.py* to include your login info and save as *config.py*
-- run `poetry install` from the directory with the *pyproject.toml* file.
-- if you want to automate the script, create a cronjob that executes `poetry run ZoleoTracker` from the directory with the *pyproject.toml* file.
+example cronjob: `*/30 * * * * cd {project_directory} && ./runtracker.zsh` Where `runtracker.zsh` just calls `poetry run zoleotracker` with the appropriate permissions.
 
 ## Contributions
 
