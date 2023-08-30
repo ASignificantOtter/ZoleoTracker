@@ -36,7 +36,3 @@ In no particular order, here are some of the future plans for ZoleoTracker:
 - Move from CSV file location data to SQL
 - Package as an application that can run at any chosen interval
 - Update to use _ZOLEO_ API when available
-
-## License
-
-MIT?
