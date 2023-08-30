@@ -23,3 +23,19 @@ Installation steps
 - run `poetry install` from the directory with the *pyproject.toml* file.
 - if you want to automate the script, create a cronjob that executes `poetry run jordantracker` from the directory with the *pyproject.toml* file.
 
+## Future plans
+
+In no particular order, here are some of the future plans for JordanTracker:
+
+- Add X(Twitter) integration
+- Add Threads / Instagram integration
+- Move from CSV file location data to SQL
+- Package as an application that can run at any chosen interval
+
+## Contributions
+
+To contribute, please don't.
+
+## License
+
+MIT?
