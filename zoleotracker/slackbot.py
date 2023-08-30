@@ -2,7 +2,7 @@
 import csv
 import os
 import slack
-from jordantracker import config
+from zoleotracker import config
 
 
 

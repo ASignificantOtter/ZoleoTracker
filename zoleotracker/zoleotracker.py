@@ -7,8 +7,8 @@ import email
 import imaplib
 import html2text
 import pandas as pd
-from jordantracker import config
-from jordantracker import slackbot
+from zoleotracker import config
+from zoleotracker import slackbot
 
 PLAIN_TEXT = 'text/plain'
 

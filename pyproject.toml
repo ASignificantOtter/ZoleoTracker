@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "jordantracker"
+name = "zoleotracker"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Brett Angelo <you@example.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -14,7 +14,7 @@ slackclient = "^2.9.4"
 pytest = "^7.4.0"
 
 [tool.poetry.scripts]
-jordantracker = "jordantracker.jordantracker:start"
+zoleotracker = "zoleotracker.zoleotracker:start"
 
 [build-system]
 requires = ["poetry-core"]
