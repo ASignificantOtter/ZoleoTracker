@@ -1,4 +1,6 @@
 
+# JordanTracker
+
 ## About
 
 JordanTracker is an automated Python script to post a _ZOLEO_ device user's current location to slack or other social media (coming soon).
@@ -20,3 +22,4 @@ Installation steps
 - edit the *example_config.py* to include your login info and save as *config.py*
 - run `poetry install` from the directory with the *pyproject.toml* file.
 - if you want to automate the script, create a cronjob that executes `poetry run jordantracker` from the directory with the *pyproject.toml* file.
+
