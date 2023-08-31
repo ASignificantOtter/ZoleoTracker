@@ -16,12 +16,13 @@ I also wanted an excuse to build a python app that integrates with slack and soc
 
 ZoleoTracker is designed to run in a python virtual environment using poetry. It is a single run script, and I've set up a cronjob to run it every 30mins for my use. 
 
-1. clone this repository
-2. edit the *example_config.py* to include your login info and save as *config.py*
-3. run `poetry install` from the high level directory.
-4. if you want to automate the script, create a cronjob that executes `poetry run ZoleoTracker` from the high level project directory.
+1. Clone this repository
+2. Edit the *config.py* to include your email server and inbox settings.
+3. Set environment variables for `SLACK_TOKEN`, `EMAIL_ACCOUNT`, and `EMAIL_PASSWORD`
+4. Run `poetry install` from the high level directory.
+5. If you want to automate the script, create a cronjob that executes `poetry run ZoleoTracker` from the high level project directory.
 
-example cronjob: `*/30 * * * * cd {project_directory} && ./runtracker.zsh` Where `runtracker.zsh` just calls `poetry run zoleotracker` with the appropriate permissions.
+Example cronjob: `*/30 * * * * cd {project_directory} && ./runtracker.zsh` Where `runtracker.zsh` just calls `poetry run zoleotracker` with the appropriate permissions and environment variables.
 
 ## Contributions
 
