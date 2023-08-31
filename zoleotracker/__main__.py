@@ -1,8 +1,8 @@
-from jordantracker import jordantracker
-from jordantracker import slackbot
+from zoleotracker import zoleotracker
+from zoleotracker import slackbot
 
 def run():
-    jordantracker.tracker()
+    zoleotracker.tracker()
     slackbot.post_location()
 
 
