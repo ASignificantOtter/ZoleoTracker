@@ -4,5 +4,4 @@ Emails/
 *.DS_Store
 *.csv
 previous_checkin.txt
-*/config.py
 runtracker.zsh

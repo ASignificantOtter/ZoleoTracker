@@ -2,9 +2,15 @@
 import csv
 import os
 import slack
-from zoleotracker import config
 
 
+# Creates slack webclient class from env variable
+def get_slack_client():
+
+    SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
+    client = slack.WebClient(token=SLACK_TOKEN)
+
+    return client
 
 def file_path(filename: str) -> str:
     cwd = os.path.dirname(os.path.realpath(__file__))
@@ -50,7 +56,8 @@ def post_location() -> None:
     previous_checkin = get_previous_checkin()
 
     if should_post(previous_checkin, current_checkin):
-        client = slack.WebClient(token=config.SLACK_TOKEN)
-        client.chat_postMessage(channel='#jordan-tracker',text='I was last here: ' + gps + '\nat this time: ' + current_checkin + ' (UTC)\n' + loc_link)
+
+        client = get_slack_client()
+        client.chat_postMessage(channel='#jordan-tracker',text='Jordan has been making some moves! His last coordinates are: ' + gps + '\n' + loc_link)
         with open(file_path('/previous_checkin.txt'), 'w', encoding='utf-8') as previous_checkin_text_fp:
          previous_checkin_text_fp.writelines(current_checkin)

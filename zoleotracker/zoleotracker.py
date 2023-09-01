@@ -1,5 +1,6 @@
 # Email parser / CSV writer of Jordan's location
 
+import os
 import re
 from datetime import datetime
 import base64
@@ -14,8 +15,11 @@ PLAIN_TEXT = 'text/plain'
 
 #returns a IMAP4_SSL class object containing the entire email folder from server
 def get_inbox():
+
+    EMAIL_ACCOUNT = os.environ.get("EMAIL_ACCOUNT")
+    EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
     mail = imaplib.IMAP4_SSL(config.EMAIL_SERVER)
-    mail.login(config.EMAIL_ACCOUNT, config.EMAIL_PASSWORD)
+    mail.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)
     mail.select(config.EMAIL_FOLDER)
 
     return mail
