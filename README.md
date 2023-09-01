@@ -32,8 +32,10 @@ To contribute, please visit the [contributing](CONTRIBUTING.md) guidelines.
 
 In no particular order, here are some of the future plans for ZoleoTracker:
 
+- Finish test coverage
+- CI/CD coverage
 - Add X(Twitter) integration
 - Add Threads / Instagram integration
 - Move from CSV file location data to SQL
 - Package as an application that can run at any chosen interval
-- Update to use _ZOLEO_ API when available
+- Update to use _ZOLEO_ API when available (2024?)
