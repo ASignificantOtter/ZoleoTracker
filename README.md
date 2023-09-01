@@ -22,20 +22,19 @@ ZoleoTracker is designed to run in a python virtual environment using poetry. It
 4. Run `poetry install` from the high level directory.
 5. If you want to automate the script, create a cronjob that executes `poetry run ZoleoTracker` from the high level project directory.
 
-Example cronjob: `*/30 * * * * cd {project_directory} && ./runtracker.zsh` Where `runtracker.zsh` just calls `poetry run zoleotracker` with the appropriate permissions and environment variables.
+Example cronjob: `*/30 * * * * cd {project_directory} && ./runtracker.zsh` 
+
+Example `runtracker.zsh`:
+
+```
+#!/bin/zsh
+export SLACK_TOKEN="secret-slack-token"
+export EMAIL_ACCOUNT="user@mail.com"
+export EMAIL_PASSWORD="mailapppassword"
+poetry run zoleotracker
+```
+
 
 ## Contributions
 
 To contribute, please visit the [contributing](CONTRIBUTING.md) guidelines.
-
-### Pending Features
-
-In no particular order, here are some of the future plans for ZoleoTracker:
-
-- Finish test coverage
-- CI/CD coverage
-- Add X(Twitter) integration
-- Add Threads / Instagram integration
-- Move from CSV file location data to SQL
-- Package as an application that can run at any chosen interval
-- Update to use _ZOLEO_ API when available (2024?)
