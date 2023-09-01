@@ -12,6 +12,10 @@ Since _ZOLEO_ devices (the gps that he took with him), don't have a REST API ava
 
 I also wanted an excuse to build a python app that integrates with slack and social media backends!
 
+## Example Slack Message
+![Example-slack](https://github.com/ASignificantOtter/ZoleoTracker/assets/140848822/480824e3-d5b5-4857-8b7d-0385b1f4ffbf)
+
+
 ## Getting Started
 
 ZoleoTracker is designed to run in a python virtual environment using poetry. It is a single run script, and I've set up a cronjob to run it every 30mins for my use. 
