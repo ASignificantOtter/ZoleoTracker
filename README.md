@@ -13,7 +13,8 @@ Since _ZOLEO_ devices (the gps that he took with him), don't have a REST API ava
 I also wanted an excuse to build a python app that integrates with slack and social media backends!
 
 ## Example Slack Message
-![Example-slack](https://github.com/ASignificantOtter/ZoleoTracker/assets/140848822/480824e3-d5b5-4857-8b7d-0385b1f4ffbf)
+![Example-slack](https://github.com/ASignificantOtter/ZoleoTracker/assets/140848822/aef914ce-9244-4db4-85e2-448d2166a591)
+
 
 
 ## Getting Started
