@@ -46,10 +46,10 @@ def read_query(connection, query):
     except Error as err:
         print(f"Error: '{err}'")
 
-def execute_list_query(connection, sql, val):
+def execute_list_query(connection, sql_query, query_values):
     cursor = connection.cursor()
     try:
-        cursor.executemany(sql, val)
+        cursor.executemany(sql_query, query_values)
         connection.commit()
         print("Query successful")
     except Error as err:
