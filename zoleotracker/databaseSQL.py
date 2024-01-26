@@ -1,57 +1,62 @@
-import mysql.connector
-from mysql.connector import Error
+import sqlite3
+import pandas as pd
 
-def create_db_connection(host_name, user_name, user_password, db_name):
-    connection = None
-    try:
-        connection = mysql.connector.connect(
-            host=host_name,
-            user=user_name,
-            passwd=user_password,
-            database=db_name
-        )
-        print("MySQL Database connection successful")
-    except Error as err:
-        print(f"Error: '{err}'")
-
+def create_db_connection():
+    connection = sqlite3.connect("zoleo.db")
     return connection
 
-def check_for_table(connection, table_name):
-    cursor = connection.cursor()
-    try:
-        cursor.execute("SHOW TABLES LIKE '%s' ", table_name)
-        result = cursor.fetchall()
-        if table_name in result:
-            return True
-        return False
-    except Error as err:
-        print(f"Error: '{err}'")
+def create_table(connection):
+    
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS tracker (
+            file TEXT,
+            checkin TEXT NOT NULL,
+            location TEXT NOT NULL,
+            link TEXT NOT NULL
+        )
+    """)
+    connection.close()
 
-def execute_query(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        connection.commit()
-        print("Query successful")
-    except Error as err:
-        print(f"Error: '{err}'")
+def table_exists(connection):
+    
+    result = connection.execute("SHOW TABLES LIKE tracker").fetchall()
+    connection.close()
+    return result
+ 
 
-def read_query(connection, query):
-    cursor = connection.cursor()
-    result = None
-    try:
-        cursor.execute(query)
-        result = cursor.fetchall()
-        return result
-    except Error as err:
-        print(f"Error: '{err}'")
+def read_last_row(connection):
+    
+    row = connection.execute("""
+        SELECT *
+        FROM tracker
+        ORDER BY id DESC
+        LIMIT 1
+    """).fetchall()
+    connection.close()
+    return row
 
-def execute_list_query(connection, sql_query, query_values):
-    cursor = connection.cursor()
-    try:
-        cursor.executemany(sql_query, query_values)
-        connection.commit()
-        print("Query successful")
-    except Error as err:
-        print(f"Error: '{err}'")
 
+def insert_rows(connection, query_values):
+   
+    connection.executemany("""
+    INSERT INTO tracker (
+        file, 
+        checkin, 
+        location, 
+        link)
+    VALUES (?, ?, ?, ?)        
+    """,
+    query_values
+    )
+    
+    connection.close()
+
+def append_dataframe_to_sql(connection, dataframe):
+    
+    dataframe.to_sql(name='tracker', con=connection, if_exists='append', index=False)
+    connection.close()
+
+def read_table_to_dataframe(connection):
+
+    dataframe = pd.read_sql('SELECT * FROM tracker', connection, index_col='checkin', parse_dates=['checkin'])
+    return dataframe
