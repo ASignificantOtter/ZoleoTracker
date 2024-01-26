@@ -5,7 +5,7 @@ def create_db_connection():
     connection = sqlite3.connect("zoleo.db")
     return connection
 
-def create_table(connection):
+def create_table_if_not_exists(connection):
     
     connection.execute("""
         CREATE TABLE IF NOT EXISTS tracker (
@@ -51,12 +51,12 @@ def insert_rows(connection, query_values):
     
     connection.close()
 
-def append_dataframe_to_sql(connection, dataframe):
+def append_dataframe(connection, dataframe):
     
     dataframe.to_sql(name='tracker', con=connection, if_exists='append', index=False)
     connection.close()
 
-def read_table_to_dataframe(connection):
+def read_to_dataframe(connection):
 
     dataframe = pd.read_sql('SELECT * FROM tracker', connection, index_col='checkin', parse_dates=['checkin'])
     return dataframe
