@@ -10,6 +10,7 @@ import html2text
 import pandas as pd
 from zoleotracker import config
 from zoleotracker import slackbot
+from zoleotracker import databaseSQL
 
 PLAIN_TEXT = 'text/plain'
 
