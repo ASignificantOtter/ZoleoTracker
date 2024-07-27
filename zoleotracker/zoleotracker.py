@@ -10,7 +10,8 @@ import html2text
 import pandas as pd
 from zoleotracker import config
 from zoleotracker import slackbot
-from zoleotracker import databaseSQL
+from zoleotracker import databaseSQL as sql
+#from zoleotracker import databaseSQL
 
 PLAIN_TEXT = 'text/plain'
 
@@ -77,7 +78,7 @@ def parse_email_server() -> pd.DataFrame:
         except AttributeError:
             checkin = re.search(r"sent at: (.+) \(UTC\)", text)
 
-        checkin = stamp_time(checkin)
+        #checkin = stamp_time(checkin)
 
         try:
             link = str(re.search(r"View on map \]\((.+)\)", text).group(1))
@@ -105,8 +106,13 @@ def tracker() -> None:
 
     df_all_checkins = parse_email_server()
     #sorts from oldest checkin to latest checkin
-    df_all_checkins.sort_values(by='checkin', inplace=True) 
+    df_all_checkins.sort_values(by='checkin', inplace=True)
     df_all_checkins.to_csv('location.csv', sep='\t', index=False,header=True)
+
+    sql.create_table_if_not_exists()
+    df_update = sql.remove_dupes(df_all_checkins)
+    sql.append_dataframe(df_update)
+
 
 def start():
     tracker()

@@ -5,3 +5,4 @@ Emails/
 *.csv
 previous_checkin.txt
 runtracker.zsh
+*.db
