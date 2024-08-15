@@ -2,11 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "debug jordantracker",
+            "name": "debug zoleotracker",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "module": "jordantracker",
+            "module": "zoleotracker",
             "justMyCode": false,
             "args": [
             ]
