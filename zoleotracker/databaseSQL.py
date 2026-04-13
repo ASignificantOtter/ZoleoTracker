@@ -1,62 +1,74 @@
 import sqlite3
+from datetime import datetime
+
 import pandas as pd
 
-def create_db_connection():
+
+def create_db_connection() -> sqlite3.Connection:
     connection = sqlite3.connect("zoleo.db")
     return connection
 
-def create_table_if_not_exists(connection):
-    
+
+def create_table_if_not_exists(connection: sqlite3.Connection) -> None:
     connection.execute("""
         CREATE TABLE IF NOT EXISTS tracker (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             file TEXT,
-            checkin TEXT NOT NULL,
+            checkin TEXT NOT NULL UNIQUE,
             location TEXT NOT NULL,
             link TEXT NOT NULL
         )
     """)
-    connection.close()
 
-def table_exists(connection):
-    
-    result = connection.execute("SHOW TABLES LIKE tracker").fetchall()
-    connection.close()
-    return result
- 
 
-def read_last_row(connection):
-    
-    row = connection.execute("""
+def table_exists(connection: sqlite3.Connection) -> bool:
+    result = connection.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='tracker'"
+    ).fetchall()
+    return len(result) > 0
+
+
+def read_last_row(connection: sqlite3.Connection) -> list[tuple]:
+    rows = connection.execute("""
         SELECT *
         FROM tracker
         ORDER BY id DESC
         LIMIT 1
     """).fetchall()
-    connection.close()
-    return row
+    return rows
 
 
-def insert_rows(connection, query_values):
-   
+def insert_rows(
+    connection: sqlite3.Connection,
+    query_values: list[tuple[str, str, str, str]],
+) -> None:
     connection.executemany("""
-    INSERT INTO tracker (
-        file, 
-        checkin, 
-        location, 
-        link)
-    VALUES (?, ?, ?, ?)        
-    """,
-    query_values
-    )
-    
-    connection.close()
+        INSERT OR IGNORE INTO tracker (
+            file,
+            checkin,
+            location,
+            link
+        )
+        VALUES (?, ?, ?, ?)
+    """, query_values)
 
-def append_dataframe(connection, dataframe):
-    
+
+def append_dataframe(
+    connection: sqlite3.Connection,
+    dataframe: pd.DataFrame,
+) -> None:
     dataframe.to_sql(name='tracker', con=connection, if_exists='append', index=False)
-    connection.close()
 
-def read_to_dataframe(connection):
 
-    dataframe = pd.read_sql('SELECT * FROM tracker', connection, index_col='checkin', parse_dates=['checkin'])
+def read_to_dataframe(connection: sqlite3.Connection) -> pd.DataFrame:
+    dataframe = pd.read_sql(
+        'SELECT * FROM tracker',
+        connection,
+        index_col='checkin',
+        parse_dates=['checkin'],
+    )
     return dataframe
+
+
+def checkin_to_str(checkin: datetime) -> str:
+    return checkin.strftime('%Y-%m-%d %H:%M:%S')
