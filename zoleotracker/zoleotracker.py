@@ -34,6 +34,8 @@ def validate_env_vars() -> None:
 def get_inbox() -> imaplib.IMAP4_SSL:
     email_account = os.environ.get('EMAIL_ACCOUNT')
     email_password = os.environ.get('EMAIL_PASSWORD')
+    assert email_account is not None, "EMAIL_ACCOUNT environment variable is not set"
+    assert email_password is not None, "EMAIL_PASSWORD environment variable is not set"
     mail = imaplib.IMAP4_SSL(config.EMAIL_SERVER)
     mail.login(email_account, email_password)
     mail.select(config.EMAIL_FOLDER)
@@ -71,6 +73,7 @@ def parse_email_server() -> pd.DataFrame:
                 for part in message.get_payload():
                     if part.get_content_type() == PLAIN_TEXT:
                         mail_content_bytes = base64.b64decode(part.get_payload())
+                        break
             else:
                 mail_content_bytes = base64.b64decode(message.get_payload())
 

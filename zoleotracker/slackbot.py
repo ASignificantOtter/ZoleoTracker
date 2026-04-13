@@ -5,6 +5,8 @@ import slack
 
 from zoleotracker import databaseSQL
 
+PREVIOUS_CHECKIN_FILE = 'previous_checkin.txt'
+
 
 # Creates Slack WebClient from environment variable.
 def get_slack_client() -> slack.WebClient:
@@ -35,10 +37,11 @@ def should_post(previous_checkin: str, current_checkin: str) -> bool:
 
 
 def get_previous_checkin() -> str:
-    previous_checkin_path = 'previous_checkin.txt'
-    with open(previous_checkin_path, 'r', encoding='utf-8') as previous_checkin_file:
-        previous_checkin = previous_checkin_file.read()
-    return previous_checkin
+    try:
+        with open(PREVIOUS_CHECKIN_FILE, 'r', encoding='utf-8') as previous_checkin_file:
+            return previous_checkin_file.read()
+    except FileNotFoundError:
+        return ''
 
 
 def post_location() -> None:
@@ -54,5 +57,5 @@ def post_location() -> None:
                 + gps + '\n' + loc_link
             ),
         )
-        with open('previous_checkin.txt', 'w', encoding='utf-8') as fp:
+        with open(PREVIOUS_CHECKIN_FILE, 'w', encoding='utf-8') as fp:
             fp.write(current_checkin)
