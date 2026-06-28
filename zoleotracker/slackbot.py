@@ -7,6 +7,7 @@ import slack
 
 from zoleotracker import config
 from zoleotracker import databaseSQL
+from zoleotracker import maps
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,34 @@ def get_previous_checkin() -> str:
         return ''
 
 
+def _upload_map_image(client: slack.WebClient, gps: str) -> None:
+    """Fetch a Google Maps Static image for *gps* and upload it to the Slack channel.
+
+    Does nothing if ``GOOGLE_MAPS_API_KEY`` is not configured or coordinate
+    parsing fails.
+    """
+    api_key = config.GOOGLE_MAPS_API_KEY
+    if not api_key:
+        return
+
+    try:
+        lat, lon = maps.parse_gps_coordinates(gps)
+        image_bytes = maps.fetch_map_image(lat, lon, api_key)
+    except Exception as exc:
+        logger.warning("Could not generate map image: %s", exc)
+        return
+
+    try:
+        client.files_upload(
+            channels=config.SLACK_CHANNEL,
+            content=image_bytes,
+            filename='location_map.png',
+            title=f'Map: {gps}',
+        )
+    except slack.errors.SlackApiError as exc:
+        logger.warning("Failed to upload map image to Slack: %s", exc.response['error'])
+
+
 def post_location() -> None:
     current_checkin, gps, loc_link = get_current_checkin()
     previous_checkin = get_previous_checkin()
@@ -59,6 +88,8 @@ def post_location() -> None:
         except slack.errors.SlackApiError as exc:
             logger.error("Failed to post Slack message: %s", exc.response['error'])
             raise
+
+        _upload_map_image(client, gps)
 
         dir_name = os.path.dirname(config.PREVIOUS_CHECKIN_FILE) or '.'
         with tempfile.NamedTemporaryFile('w', dir=dir_name, delete=False, encoding='utf-8') as tmp:

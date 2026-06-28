@@ -20,3 +20,6 @@ PREVIOUS_CHECKIN_FILE = os.path.join(_PROJECT_ROOT, 'previous_checkin.txt')
 
 # Slack channel to post location updates to
 SLACK_CHANNEL = '#jordan-tracker'
+
+# Google Maps Static API key — set GOOGLE_MAPS_API_KEY to enable map image generation
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', '')
