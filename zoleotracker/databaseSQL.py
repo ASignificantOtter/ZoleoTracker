@@ -1,12 +1,37 @@
 import sqlite3
+from contextlib import contextmanager
 from datetime import datetime
+from typing import Generator, NamedTuple
 
 import pandas as pd
 
+from zoleotracker import config
+
+
+class CheckinRow(NamedTuple):
+    id: int
+    file: str
+    checkin: str
+    location: str
+    link: str
+
 
 def create_db_connection() -> sqlite3.Connection:
-    connection = sqlite3.connect("zoleo.db")
+    connection = sqlite3.connect(config.DATABASE_PATH)
     return connection
+
+
+@contextmanager
+def db_connection() -> Generator[sqlite3.Connection, None, None]:
+    connection = create_db_connection()
+    try:
+        yield connection
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
 
 
 def create_table_if_not_exists(connection: sqlite3.Connection) -> None:
@@ -28,14 +53,14 @@ def table_exists(connection: sqlite3.Connection) -> bool:
     return len(result) > 0
 
 
-def read_last_row(connection: sqlite3.Connection) -> list[tuple]:
+def read_last_row(connection: sqlite3.Connection) -> list[CheckinRow]:
     rows = connection.execute("""
         SELECT *
         FROM tracker
         ORDER BY id DESC
         LIMIT 1
     """).fetchall()
-    return rows
+    return [CheckinRow(*row) for row in rows]
 
 
 def insert_rows(

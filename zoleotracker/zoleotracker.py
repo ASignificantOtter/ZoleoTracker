@@ -34,11 +34,17 @@ def validate_env_vars() -> None:
 def get_inbox() -> imaplib.IMAP4_SSL:
     email_account = os.environ.get('EMAIL_ACCOUNT')
     email_password = os.environ.get('EMAIL_PASSWORD')
-    assert email_account is not None, "EMAIL_ACCOUNT environment variable is not set"
-    assert email_password is not None, "EMAIL_PASSWORD environment variable is not set"
-    mail = imaplib.IMAP4_SSL(config.EMAIL_SERVER)
-    mail.login(email_account, email_password)
-    mail.select(config.EMAIL_FOLDER)
+    if not email_account:
+        raise EnvironmentError("EMAIL_ACCOUNT environment variable is not set")
+    if not email_password:
+        raise EnvironmentError("EMAIL_PASSWORD environment variable is not set")
+    try:
+        mail = imaplib.IMAP4_SSL(config.EMAIL_SERVER)
+        mail.login(email_account, email_password)
+        mail.select(config.EMAIL_FOLDER)
+    except (imaplib.IMAP4.error, OSError) as exc:
+        logger.error("Failed to connect to email server: %s", exc)
+        sys.exit(1)
     return mail
 
 
@@ -57,6 +63,8 @@ def parse_email_server() -> pd.DataFrame:
     for mail_block in inbox:
         mail_ids += mail_block.split()
 
+    logger.debug("Found %d email(s) in inbox.", len(mail_ids))
+
     for i in mail_ids:
         _status, raw_email = mail.fetch(i, config.MESSAGE_FORMAT)
         for response_part in raw_email:
@@ -66,7 +74,10 @@ def parse_email_server() -> pd.DataFrame:
             message = email.message_from_bytes(response_part[1])
 
             if message['subject'] != config.CHECKIN_EMAIL_SUBJECT:
+                logger.debug("Skipping email with subject %r.", message['subject'])
                 continue
+
+            logger.debug("Parsing check-in email: %r", message['subject'])
 
             if message.is_multipart():
                 mail_content_bytes = b''
@@ -103,6 +114,8 @@ def parse_email_server() -> pd.DataFrame:
             checkins.append(checkin)
             links.append(link)
 
+    logger.info("Parsed %d check-in(s) from inbox.", len(file_names))
+
     df_all_checkins = pd.DataFrame({
         'file': file_names,
         'checkin': checkins,
@@ -134,11 +147,9 @@ def tracker() -> None:
         for row in df_all_checkins.itertuples(index=False)
     ]
 
-    connection = databaseSQL.create_db_connection()
-    databaseSQL.create_table_if_not_exists(connection)
-    databaseSQL.insert_rows(connection, query_values)
-    connection.commit()
-    connection.close()
+    with databaseSQL.db_connection() as connection:
+        databaseSQL.create_table_if_not_exists(connection)
+        databaseSQL.insert_rows(connection, query_values)
 
 
 def start() -> None:
