@@ -72,7 +72,7 @@ flowchart TD
 
 - Uses `imaplib.IMAP4_SSL` against `imap.gmail.com` by default.
 - Scans the selected folder for all messages, then filters by exact subject match:
-	- `Check-in message from SlothPace`
+	- `Check-in message from [User]`
 - Decodes payload content and converts it to plain text via `html2text`.
 - Extracts fields with regex patterns:
 	- Location: `My location is ...`
@@ -137,8 +137,8 @@ Implementation notes:
 
 - `EMAIL_SERVER` (default: `imap.gmail.com`)
 - `EMAIL_FOLDER` (default: `inbox`)
-- `CHECKIN_EMAIL_SUBJECT` (default: `Check-in message from SlothPace`)
-- `SLACK_CHANNEL` (default: `#jordan-tracker`)
+- `CHECKIN_EMAIL_SUBJECT` (default: `Check-in message from [User]`)
+- `SLACK_CHANNEL` (default: `#[channel]`)
 - `PREVIOUS_CHECKIN_FILE` (default project-local `previous_checkin.txt`)
 
 ## Reliability and Failure Handling
