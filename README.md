@@ -9,7 +9,7 @@ At runtime, it:
 1. Connects to an IMAP inbox.
 2. Parses ZOLEO check-in emails into structured records.
 3. Persists check-ins in SQLite with deduplication.
-4. Posts only new check-ins to Slack.
+4. Posts the most recent check-in to Slack only if it's newer than the last posted check-in.
 5. Optionally uploads a Google Static Maps image for the latest coordinates.
 
 ## Why?
