@@ -16,18 +16,29 @@ def parse_gps_coordinates(location: str) -> tuple[float, float]:
 
     North and East values are positive; South and West values are negative.
     """
-    pattern = r'([\d.]+)\s*([NS])\s*,\s*([\d.]+)\s*([EW])'
+    if not isinstance(location, str) or not location.strip():
+        raise ValueError("GPS coordinates must be a non-empty string.")
+
+    pattern = r'^([+-]?\d+(?:\.\d+)?)\s*([NSns])(?:\s*,\s*|\s+)([+-]?\d+(?:\.\d+)?)\s*([EWew])$'
     match = re.match(pattern, location.strip())
     if not match:
-        raise ValueError(f"Could not parse GPS coordinates from: {location!r}")
+        raise ValueError(
+            f"Could not parse GPS coordinates from: {location!r}. "
+            "Expected format like '47.6 N, 122.3 W'."
+        )
 
-    lat = float(match.group(1))
-    if match.group(2) == 'S':
+    lat = abs(float(match.group(1)))
+    if match.group(2).upper() == 'S':
         lat = -lat
 
-    lon = float(match.group(3))
-    if match.group(4) == 'W':
+    lon = abs(float(match.group(3)))
+    if match.group(4).upper() == 'W':
         lon = -lon
+
+    if not -90 <= lat <= 90:
+        raise ValueError(f"Latitude out of range (-90 to 90): {lat}")
+    if not -180 <= lon <= 180:
+        raise ValueError(f"Longitude out of range (-180 to 180): {lon}")
 
     return lat, lon
 
