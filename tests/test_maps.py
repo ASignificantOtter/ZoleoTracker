@@ -31,6 +31,34 @@ def test_parse_gps_coordinates_south_west():
     assert lon == pytest.approx(-58.4)
 
 
+def test_parse_gps_coordinates_accepts_lowercase_and_space_separator():
+    lat, lon = maps.parse_gps_coordinates('47.6 n 122.3 w')
+    assert lat == pytest.approx(47.6)
+    assert lon == pytest.approx(-122.3)
+
+
+def test_parse_gps_coordinates_raises_on_partial_record():
+    with pytest.raises(ValueError, match="Could not parse GPS coordinates"):
+        maps.parse_gps_coordinates('47.6 N,')
+
+
+def test_parse_gps_coordinates_raises_on_trailing_noise():
+    with pytest.raises(ValueError, match="Could not parse GPS coordinates"):
+        maps.parse_gps_coordinates('47.6 N, 122.3 W extra')
+
+
+def test_parse_gps_coordinates_raises_on_out_of_range_values():
+    with pytest.raises(ValueError, match="Latitude out of range"):
+        maps.parse_gps_coordinates('91 N, 122.3 W')
+
+
+def test_parse_gps_coordinates_raises_on_non_string_or_blank_input():
+    with pytest.raises(ValueError, match="non-empty string"):
+        maps.parse_gps_coordinates('')
+    with pytest.raises(ValueError, match="non-empty string"):
+        maps.parse_gps_coordinates(None)
+
+
 def test_parse_gps_coordinates_raises_on_invalid_string():
     with pytest.raises(ValueError, match="Could not parse GPS coordinates"):
         maps.parse_gps_coordinates('not a coordinate')
