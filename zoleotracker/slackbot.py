@@ -63,7 +63,7 @@ def _upload_map_image(client: slack.WebClient, gps: str) -> None:
     try:
         client.files_upload(
             channels=config.SLACK_CHANNEL,
-            content=image_bytes,
+            file=image_bytes,
             filename='location_map.png',
             title=f'Map: {gps}',
         )

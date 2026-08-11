@@ -10,24 +10,54 @@ STATIC_MAP_BASE_URL = 'https://maps.googleapis.com/maps/api/staticmap'
 MAP_SIZE = '600x400'
 MAP_ZOOM = '10'
 
+_DIRECTIONAL_COORDINATES = re.compile(
+    r"""
+    ^\s*
+    (?P<lat>\d+(?:\.\d+)?)\s*°?\s*(?P<lat_dir>[NS])
+    (?:\s*,\s*|\s+)
+    (?P<lon>\d+(?:\.\d+)?)\s*°?\s*(?P<lon_dir>[EW])
+    \s*$
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+_SIGNED_COORDINATES = re.compile(
+    r"""
+    ^\s*
+    (?P<lat>[+-]?\d+(?:\.\d+)?)\s*,\s*(?P<lon>[+-]?\d+(?:\.\d+)?)
+    \s*$
+    """,
+    re.VERBOSE,
+)
+
 
 def parse_gps_coordinates(location: str) -> tuple[float, float]:
-    """Parse a GPS location string like '47.6 N, 122.3 W' into (latitude, longitude).
+    """Parse a GPS location string into (latitude, longitude).
 
-    North and East values are positive; South and West values are negative.
+    Supports:
+    - Directional values like ``47.6 N, 122.3 W`` (case-insensitive, comma optional)
+    - Signed decimal values like ``47.6, -122.3``
     """
-    pattern = r'([\d.]+)\s*([NS])\s*,\s*([\d.]+)\s*([EW])'
-    match = re.match(pattern, location.strip())
-    if not match:
-        raise ValueError(f"Could not parse GPS coordinates from: {location!r}")
+    directional_match = _DIRECTIONAL_COORDINATES.match(location)
+    if directional_match:
+        lat = float(directional_match.group('lat'))
+        if directional_match.group('lat_dir').upper() == 'S':
+            lat = -lat
 
-    lat = float(match.group(1))
-    if match.group(2) == 'S':
-        lat = -lat
+        lon = float(directional_match.group('lon'))
+        if directional_match.group('lon_dir').upper() == 'W':
+            lon = -lon
+    else:
+        signed_match = _SIGNED_COORDINATES.match(location)
+        if not signed_match:
+            raise ValueError(f"Could not parse GPS coordinates from: {location!r}")
 
-    lon = float(match.group(3))
-    if match.group(4) == 'W':
-        lon = -lon
+        lat = float(signed_match.group('lat'))
+        lon = float(signed_match.group('lon'))
+
+    if not -90 <= lat <= 90:
+        raise ValueError(f"Latitude out of range: {lat}")
+    if not -180 <= lon <= 180:
+        raise ValueError(f"Longitude out of range: {lon}")
 
     return lat, lon
 

@@ -155,7 +155,8 @@ def test_upload_map_image_uploads_when_api_key_set():
     mock_client.files_upload.assert_called_once()
     call_kwargs = mock_client.files_upload.call_args.kwargs
     assert call_kwargs['channels'] == '#test-channel'
-    assert call_kwargs['content'] == fake_image
+    assert call_kwargs['file'] == fake_image
+    assert 'content' not in call_kwargs
 
 
 def test_upload_map_image_logs_warning_on_parse_error():

@@ -110,7 +110,12 @@ Implementation notes:
 ### 4. Optional map image generation
 
 - Enabled only when `GOOGLE_MAPS_API_KEY` is set.
-- Parses coordinates like `47.6 N, 122.3 W` into signed floats.
+- Parses coordinates into signed floats. Supported examples include:
+	- `47.6 N, 122.3 W`
+	- `47.6 n 122.3 w`
+	- `47.6° N, 122.3° W`
+	- `47.6, -122.3`
+- Latitude/longitude must be within valid ranges (`[-90, 90]`, `[-180, 180]`).
 - Fetches image bytes from Google Static Maps API and uploads as a Slack file attachment.
 - Map upload errors are non-fatal to primary text notification flow.
 

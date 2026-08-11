@@ -31,10 +31,38 @@ def test_parse_gps_coordinates_south_west():
     assert lon == pytest.approx(-58.4)
 
 
+def test_parse_gps_coordinates_accepts_lowercase_directions():
+    lat, lon = maps.parse_gps_coordinates('47.6 n, 122.3 w')
+    assert lat == pytest.approx(47.6)
+    assert lon == pytest.approx(-122.3)
+
+
+def test_parse_gps_coordinates_accepts_no_comma_with_directions():
+    lat, lon = maps.parse_gps_coordinates('47.6 N 122.3 W')
+    assert lat == pytest.approx(47.6)
+    assert lon == pytest.approx(-122.3)
+
+
+def test_parse_gps_coordinates_accepts_signed_decimal_format():
+    lat, lon = maps.parse_gps_coordinates('-33.9, 18.4')
+    assert lat == pytest.approx(-33.9)
+    assert lon == pytest.approx(18.4)
+
+
+def test_parse_gps_coordinates_accepts_degree_symbol():
+    lat, lon = maps.parse_gps_coordinates('47.6° N, 122.3° W')
+    assert lat == pytest.approx(47.6)
+    assert lon == pytest.approx(-122.3)
+
+
 def test_parse_gps_coordinates_raises_on_invalid_string():
     with pytest.raises(ValueError, match="Could not parse GPS coordinates"):
         maps.parse_gps_coordinates('not a coordinate')
 
+
+def test_parse_gps_coordinates_raises_on_out_of_range_values():
+    with pytest.raises(ValueError, match="Latitude out of range"):
+        maps.parse_gps_coordinates('91 N, 122 W')
 
 # --- build_static_map_url ---
 
