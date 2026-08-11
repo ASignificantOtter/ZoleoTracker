@@ -155,7 +155,7 @@ def test_upload_map_image_uploads_when_api_key_set():
     mock_client.files_upload.assert_called_once()
     call_kwargs = mock_client.files_upload.call_args.kwargs
     assert call_kwargs['channels'] == '#test-channel'
-    assert call_kwargs['content'] == fake_image
+    assert call_kwargs['file'] == fake_image
 
 
 def test_upload_map_image_logs_warning_on_parse_error():
@@ -169,6 +169,38 @@ def test_upload_map_image_logs_warning_on_parse_error():
         slackbot._upload_map_image(mock_client, 'bad coords')
 
     mock_client.files_upload.assert_not_called()
+
+
+def test_upload_map_image_retries_and_succeeds_after_failure(caplog):
+    mock_client = MagicMock()
+    mock_client.files_upload.side_effect = [RuntimeError("temporary failure"), None]
+
+    with patch('zoleotracker.slackbot.config') as mock_config, \
+         patch('zoleotracker.slackbot.maps.parse_gps_coordinates', return_value=(47.6, -122.3)), \
+         patch('zoleotracker.slackbot.maps.fetch_map_image', return_value=b'img'):
+        mock_config.GOOGLE_MAPS_API_KEY = 'FAKE_KEY'
+        mock_config.SLACK_CHANNEL = '#test-channel'
+        with caplog.at_level('WARNING'):
+            slackbot._upload_map_image(mock_client, '47.6 N, 122.3 W')
+
+    assert mock_client.files_upload.call_count == 2
+    assert "attempt 1/3 failed" in caplog.text
+
+
+def test_upload_map_image_falls_back_after_retry_exhausted(caplog):
+    mock_client = MagicMock()
+    mock_client.files_upload.side_effect = RuntimeError("still failing")
+
+    with patch('zoleotracker.slackbot.config') as mock_config, \
+         patch('zoleotracker.slackbot.maps.parse_gps_coordinates', return_value=(47.6, -122.3)), \
+         patch('zoleotracker.slackbot.maps.fetch_map_image', return_value=b'img'):
+        mock_config.GOOGLE_MAPS_API_KEY = 'FAKE_KEY'
+        mock_config.SLACK_CHANNEL = '#test-channel'
+        with caplog.at_level('WARNING'):
+            slackbot._upload_map_image(mock_client, '47.6 N, 122.3 W')
+
+    assert mock_client.files_upload.call_count == 3
+    assert "Proceeding without map image" in caplog.text
 
 
 def test_post_location_uploads_map_image_when_new_checkin(tmp_path, monkeypatch):
