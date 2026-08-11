@@ -60,15 +60,34 @@ def _upload_map_image(client: slack.WebClient, gps: str) -> None:
         logger.warning("Could not generate map image: %s", exc)
         return
 
-    try:
-        client.files_upload(
-            channels=config.SLACK_CHANNEL,
-            content=image_bytes,
-            filename='location_map.png',
-            title=f'Map: {gps}',
-        )
-    except slack.errors.SlackApiError as exc:
-        logger.warning("Failed to upload map image to Slack: %s", exc.response['error'])
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            client.files_upload(
+                channels=config.SLACK_CHANNEL,
+                file=image_bytes,
+                filename='location_map.png',
+                title=f'Map: {gps}',
+            )
+            return
+        except Exception as exc:
+            error = str(exc)
+            if isinstance(exc, slack.errors.SlackApiError):
+                error = exc.response.get('error', error)
+            logger.warning(
+                "Slack map image upload attempt %s/%s failed for channel=%s gps=%s: %s",
+                attempt,
+                max_attempts,
+                config.SLACK_CHANNEL,
+                gps,
+                error,
+            )
+
+    logger.warning(
+        "Proceeding without map image after %s failed upload attempts for gps=%s",
+        max_attempts,
+        gps,
+    )
 
 
 def post_location() -> None:
