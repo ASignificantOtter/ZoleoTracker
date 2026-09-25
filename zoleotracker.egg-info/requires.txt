@@ -1,0 +1,4 @@
+pandas<3,>=2.0.3
+html2text==2020.1.16
+slackclient<3,>=2.9.4
+requests<3,>=2.34.2
