@@ -1,4 +1,5 @@
 .venv/*
+*.egg-info/
 *pycache*
 Emails/
 *.DS_Store
